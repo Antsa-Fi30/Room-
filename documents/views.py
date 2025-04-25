@@ -1,8 +1,11 @@
+import os
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import DocumentsSerializer
 from .models import Document
+from helpers.pdf_converter import pdf_to_svg
+from django.conf import settings
 
 
 # Create your views here.
@@ -32,3 +35,28 @@ class FileUploadView(APIView):
             return Response(
                 {"error": "Document not found."}, status=status.HTTP_404_NOT_FOUND
             )
+
+
+class FileToSVG(APIView):
+    def get(self, request, id, *args, **kwargs):
+        try:
+            document = Document.objects.get(id=id)
+            pdf_path = document.file.path
+
+            svg_data, svg_url = pdf_to_svg(pdf_path)
+
+            return Response(
+                {"svg_data": svg_data, "URL": request.build_absolute_uri(svg_url)},
+                status=status.HTTP_200_OK,
+            )
+        except Document.DoesNotExist:
+            return Response(
+                {"error": "Document not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+# Compare this snippet from documents/urls.py:

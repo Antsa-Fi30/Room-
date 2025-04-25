@@ -18,9 +18,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from .views import FileUploadView
+from .views import FileToSVG, FileUploadView
 
 urlpatterns = [
     path("api/documents/upload/", FileUploadView.as_view(), name="Upload pdf"),
     path("api/documents/upload/<int:id>/", FileUploadView.as_view(), name="Delete pdf"),
+    path(
+        "api/documents/read/<int:id>/convert/",
+        FileToSVG.as_view(),
+        name="Convert to SVG",
+    ),
 ]
