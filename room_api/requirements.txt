@@ -1,0 +1,3 @@
+Django==5.2
+django-cors-headers==4.7.0  # si tu as besoin d'accepter des requêtes cross-origin (ex: frontend React)
+djangorestframework==3.16.0 # si tu fais un endpoint API
